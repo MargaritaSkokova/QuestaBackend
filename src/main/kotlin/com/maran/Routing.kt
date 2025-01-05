@@ -19,5 +19,9 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello World!")
         }
+
+        get("/know") {
+            call.respondText("I know, you know, we know, Lee know")
+        }
     }
 }
