@@ -1,22 +1,22 @@
-package com.maran.service
+package com.maran.data.repository
 
 import com.maran.data.daos.ResultDao
 import com.maran.data.daos.TestDao
 import com.maran.data.entities.ResultEntity
-import com.maran.data.models.Result
-import com.maran.data.models.Test
+import com.maran.data.models.Model.Result
+import com.maran.data.models.Model.Test
 import com.maran.data.resultDaoToModel
 import com.maran.data.suspendTransaction
 import java.util.*
 
-class ResultRepositoryImpl : ResultRepository {
-    override suspend fun insert(result: Result): Result = suspendTransaction {
-        resultDaoToModel(ResultDao.new { test = TestDao[result.test.id]; resultMessage = result.resultMessage })
+class ResultRepository : IResultRepository {
+    override suspend fun insert(value: Result): Result = suspendTransaction {
+        resultDaoToModel(ResultDao.new { test = TestDao[value.test.id]; resultMessage = value.resultMessage })
     }
 
-    override suspend fun update(result: Result): Result? = suspendTransaction {
-        val dao = ResultDao.findByIdAndUpdate(result.id) {
-            TestDao[result.test.id]; result.resultMessage
+    override suspend fun update(value: Result): Result? = suspendTransaction {
+        val dao = ResultDao.findByIdAndUpdate(value.id) {
+            TestDao[value.test.id]; value.resultMessage
         }
         if (dao == null) {
             null

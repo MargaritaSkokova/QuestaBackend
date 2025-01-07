@@ -1,20 +1,20 @@
-package com.maran.service
+package com.maran.data.repository
 
 import com.maran.data.daos.RoleDao
 import com.maran.data.daos.UserDao
 import com.maran.data.entities.UserEntity
-import com.maran.data.models.User
+import com.maran.data.models.Model.User
 import com.maran.data.suspendTransaction
 import com.maran.data.userDaoToModel
 import java.util.*
 
-class UserRepositoryImpl : UserRepository {
-    override suspend fun insert(user: User): User = suspendTransaction {
-        userDaoToModel(UserDao.new { username = user.username; password = user.password;role = RoleDao[user.role.id] })
+class UserRepository : IUserRepository {
+    override suspend fun insert(value: User): User = suspendTransaction {
+        userDaoToModel(UserDao.new { username = value.username; password = value.password;role = RoleDao[value.role.id] })
     }
 
-    override suspend fun update(user: User): User? = suspendTransaction {
-        val dao = UserDao.findByIdAndUpdate(user.id) { user.username; user.password; RoleDao[user.role.id] }
+    override suspend fun update(value: User): User? = suspendTransaction {
+        val dao = UserDao.findByIdAndUpdate(value.id) { value.username; value.password; RoleDao[value.role.id] }
         if (dao == null) {
             null
         } else {

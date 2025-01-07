@@ -1,6 +1,6 @@
 package com.maran
 
-import com.maran.service.*
+import com.maran.data.repository.*
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -8,16 +8,18 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    val answerRepository = AnswerRepositoryImpl()
-    val questionRepository = QuestionRepositoryImpl()
-    val resultRepository = ResultRepositoryImpl()
-    val roleRepository = RoleRepositoryImpl()
-    val testRepository = TestRepositoryImpl()
-    val themeRepository = ThemeRepositoryImpl()
-    val userRepository = UserRepositoryImpl()
+    val component = DaggerQuestaComponent.builder().questaModule(QuestaModule()).build()
 
-    configureSecurity()
+    val answerRepository = AnswerRepository()
+    val questionRepository = QuestionRepository()
+    val resultRepository = ResultRepository()
+    val roleRepository = RoleRepository()
+    val testRepository = TestRepository()
+    val themeRepository = ThemeRepository()
+    val userRepository = UserRepository()
+
+//    configureSecurity()
     configureSerialization()
     configureDatabases()
-    configureRouting()
+    configureRouting(component.themeService())
 }

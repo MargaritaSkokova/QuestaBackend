@@ -1,24 +1,24 @@
-package com.maran.service
+package com.maran.data.repository
 
 import com.maran.data.daos.QuestionDao
 import com.maran.data.daos.TestDao
 import com.maran.data.entities.QuestionEntity
-import com.maran.data.models.Question
-import com.maran.data.models.Test
+import com.maran.data.models.Model.Question
+import com.maran.data.models.Model.Test
 import com.maran.data.questionDaoToModel
 import com.maran.data.suspendTransaction
 import java.util.*
 
-class QuestionRepositoryImpl : QuestionRepository {
-    override suspend fun insert(question: Question): Question = suspendTransaction {
+class QuestionRepository :IQuestionRepository {
+    override suspend fun insert(value: Question): Question = suspendTransaction {
         questionDaoToModel(QuestionDao.new {
-            text = question.text; test = TestDao[question.test.id]; order = question.order
+            text = value.text; test = TestDao[value.test.id]; order = value.order
         })
     }
 
-    override suspend fun update(question: Question): Question? = suspendTransaction {
+    override suspend fun update(value: Question): Question? = suspendTransaction {
         val dao =
-            QuestionDao.findByIdAndUpdate(question.id) { question.text; TestDao[question.test.id]; question.order }
+            QuestionDao.findByIdAndUpdate(value.id) { value.text; TestDao[value.test.id]; value.order }
         if (dao == null) {
             null
         } else {

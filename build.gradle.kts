@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm") version "2.1.0"
     id("io.ktor.plugin") version "3.0.3"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
+    kotlin("kapt") version "2.1.0"
 }
 
 group = "com.example"
@@ -27,6 +28,9 @@ repositories {
 
 dependencies {
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    implementation ("com.google.dagger:dagger:2.54")
+    kapt("com.google.dagger:dagger-compiler:2.54")
+    annotationProcessor ("com.google.dagger:dagger-compiler:2.54")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-client-core-jvm")
