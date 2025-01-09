@@ -2,8 +2,8 @@ package com.maran.data.entities
 
 import org.jetbrains.exposed.dao.id.UUIDTable
 
-object UserEntity : UUIDTable("user") {
-    val username = varchar("username", 50)
+object UserEntity : UUIDTable("User") {
+    val username = varchar("username", 70)
     val role = reference("role", RoleEntity)
-    val password = varchar("password_hash", 50)
+    val password = varchar("password_hash", 70)
 }

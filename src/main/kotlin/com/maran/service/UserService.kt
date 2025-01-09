@@ -3,6 +3,7 @@ package com.maran.service
 import com.maran.data.models.Model.User
 import com.maran.data.repository.IUserRepository
 import com.maran.service.results.OperationResult
+import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 import javax.inject.Inject
 
@@ -48,8 +49,14 @@ class UserService @Inject constructor(private val userRepository: IUserRepositor
 
     override suspend fun insert(value: User): OperationResult {
         return try {
-            val user = userRepository.insert(value) ?: return OperationResult.FailureResult("Not Found")
-            return OperationResult.SuccessResult(listOf(user))
+            if (userRepository.getByName(value.username) == null) {
+                val securedUser = User(id = value.id, username = value.username, password = BCrypt.hashpw(value.password, BCrypt.gensalt()).toString(), role = value.role)
+                val user = userRepository.insert(securedUser) ?: return OperationResult.FailureResult("Not Found")
+                OperationResult.SuccessResult(listOf(user))
+            }
+            else {
+                OperationResult.FailureResult("Username already exists")
+            }
         } catch (e: Exception) {
             OperationResult.FailureResult(e.message ?: "Unknown error")
         }

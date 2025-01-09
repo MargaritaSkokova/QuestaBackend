@@ -48,8 +48,12 @@ class ThemeService @Inject constructor(private val themeRepository: IThemeReposi
 
     override suspend fun insert(value: Theme): OperationResult {
         return try {
-            val theme = themeRepository.insert(value) ?: return OperationResult.FailureResult("Not Found")
-            return OperationResult.SuccessResult(listOf(theme))
+            if (themeRepository.getByName(value.name) == null) {
+                val theme = themeRepository.insert(value) ?: return OperationResult.FailureResult("Not Found")
+                return OperationResult.SuccessResult(listOf(theme))
+            } else {
+                OperationResult.FailureResult("Name already exists")
+            }
         } catch (e: Exception) {
             OperationResult.FailureResult(e.message ?: "Unknown error")
         }

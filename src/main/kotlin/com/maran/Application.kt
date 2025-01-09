@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val component = DaggerQuestaComponent.builder().questaModule(QuestaModule()).build()
 
-//    configureSecurity()
+    configureSecurity()
     configureSerialization()
     configureDatabases()
     configureTestRouting(component.testService())

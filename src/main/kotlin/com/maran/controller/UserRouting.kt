@@ -1,5 +1,6 @@
 package com.maran.controller
 
+import com.maran.data.models.Model
 import com.maran.data.models.Model.User
 import com.maran.service.IUserService
 import com.maran.service.results.OperationResult
@@ -8,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 
 fun Application.configureUserRouting(userService: IUserService) {
@@ -78,6 +80,23 @@ fun Application.configureUserRouting(userService: IUserService) {
             } else if (result is OperationResult.FailureResult) {
                 call.respond(HttpStatusCode.BadRequest, result.errorMessage)
             }
+        }
+
+        get("/auth") {
+            val userToCheck = call.receive<Model.Authentication>()
+            val userReal = userService.getByName(userToCheck.username)
+            if (userReal is OperationResult.SuccessResult) {
+                if (BCrypt.checkpw(userToCheck.password, (userReal.value[0] as User).password)) {
+                    call.respond(HttpStatusCode.OK)
+                    return@get
+                } else {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@get
+                }
+            } else if (userReal is OperationResult.FailureResult) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+
         }
     }
 }

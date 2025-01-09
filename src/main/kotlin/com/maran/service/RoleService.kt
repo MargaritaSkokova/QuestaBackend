@@ -50,8 +50,12 @@ class RoleService @Inject constructor(
 
     override suspend fun insert(value: Role): OperationResult {
         return try {
-            val role = roleRepository.insert(value) ?: return OperationResult.FailureResult("Not Found")
-            return OperationResult.SuccessResult(listOf(role))
+            if (roleRepository.getByName(value.name) == null) {
+                val role = roleRepository.insert(value) ?: return OperationResult.FailureResult("Not Found")
+                return OperationResult.SuccessResult(listOf(role))
+            } else {
+                OperationResult.FailureResult("Name already exists")
+            }
         } catch (e: Exception) {
             OperationResult.FailureResult(e.message ?: "Unknown error")
         }

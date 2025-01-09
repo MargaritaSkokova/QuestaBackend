@@ -64,4 +64,10 @@ sealed class Model {
         val role: Role,
         val password: String
     ) : Model()
+
+    @Serializable
+    data class Authentication(
+        val username: String,
+        val password: String
+    ) : Model()
 }
