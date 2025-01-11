@@ -73,7 +73,7 @@ fun Application.configureUserRouting(userService: IUserService) {
         }
 
         authenticate("auth-jwt") {
-            get("/user/name") {
+            get("/user/name/{name}") {
                 val name = call.parameters["name"]
                 if (name == null) {
                     call.respond(HttpStatusCode.BadRequest)

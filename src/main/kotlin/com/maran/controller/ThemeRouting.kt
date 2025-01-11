@@ -63,7 +63,7 @@ fun Application.configureThemeRouting(themeService: IThemeService) {
         }
 
         authenticate("auth-jwt") {
-            get("/theme/name") {
+            get("/theme/name/{name}") {
                 val name = call.parameters["name"]
                 if (name == null) {
                     call.respond(HttpStatusCode.BadRequest)

@@ -63,7 +63,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
         }
 
         authenticate("auth-jwt") {
-            get("/role/name") {
+            get("/role/name/{name}") {
                 val name = call.parameters["name"]
                 if (name == null) {
                     call.respond(HttpStatusCode.BadRequest)
