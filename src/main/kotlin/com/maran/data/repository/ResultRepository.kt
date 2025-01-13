@@ -11,12 +11,12 @@ import java.util.*
 
 class ResultRepository : IResultRepository {
     override suspend fun insert(value: Result): Result = suspendTransaction {
-        resultDaoToModel(ResultDao.new { test = TestDao[value.test.id]; resultMessage = value.resultMessage })
+        resultDaoToModel(ResultDao.new { test = TestDao[value.test.id]; resultMessage = value.resultMessage; maxPoints = value.maxPoints; personality = value.personality; } )
     }
 
     override suspend fun update(value: Result): Result? = suspendTransaction {
         val dao = ResultDao.findByIdAndUpdate(value.id) {
-            TestDao[value.test.id]; value.resultMessage
+            TestDao[value.test.id]; value.resultMessage; value.maxPoints; value.personality
         }
         if (dao == null) {
             null

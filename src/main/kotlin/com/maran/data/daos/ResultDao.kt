@@ -11,4 +11,6 @@ class ResultDao(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var test by TestDao referencedOn ResultEntity.test
     var resultMessage by ResultEntity.resultMessage
+    var maxPoints by ResultEntity.maxPoints
+    var personality by ResultEntity.personality
 }

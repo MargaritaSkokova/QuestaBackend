@@ -29,7 +29,9 @@ sealed class Model {
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
         val test: Test,
-        val resultMessage: String
+        val resultMessage: String,
+        val maxPoints: Int?,
+        val personality: String?
     ) : Model()
 
     @Serializable
