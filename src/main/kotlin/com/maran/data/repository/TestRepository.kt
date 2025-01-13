@@ -32,13 +32,13 @@ class TestRepository : ITestRepository {
 
     override suspend fun insert(value: Test): Test = suspendTransaction {
         testDaoToModel(TestDao.new {
-            type = value.type; name = value.name; author = UserDao[value.author.id]; theme = ThemeDao[value.theme.id]
+            type = value.type; name = value.name; author = UserDao[value.author.id]; theme = ThemeDao[value.theme.id]; description = value.description
         })
     }
 
     override suspend fun update(value: Test): Test? = suspendTransaction {
         val dao =
-            TestDao.findByIdAndUpdate(value.id) { value.type; value.name; UserDao[value.author.id]; ThemeDao[value.theme.id] }
+            TestDao.findByIdAndUpdate(value.id) { value.type; value.name; UserDao[value.author.id]; ThemeDao[value.theme.id]; value.description }
         if (dao == null) {
             null
         } else {

@@ -13,4 +13,5 @@ class TestDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by TestEntity.name
     var author by UserDao referencedOn TestEntity.author
     var theme by ThemeDao referencedOn TestEntity.theme
+    var description by TestEntity.description
 }

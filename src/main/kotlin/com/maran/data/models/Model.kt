@@ -49,7 +49,8 @@ sealed class Model {
         val type: String,
         val name: String,
         val author: User,
-        val theme: Theme
+        val theme: Theme,
+        val description: String,
     ) : Model()
 
     @Serializable

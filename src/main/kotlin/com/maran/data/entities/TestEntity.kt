@@ -7,4 +7,5 @@ object TestEntity : UUIDTable("Test") {
     val name= varchar("name", 70)
     val author = reference("author", UserEntity)
     val theme= reference("theme", ThemeEntity)
+    val description = varchar("description", 300)
 }
