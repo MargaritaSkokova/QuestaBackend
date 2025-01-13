@@ -15,7 +15,8 @@ fun testDaoToModel(dao: TestDao): Model.Test {
         name = dao.name,
         author = userDaoToModel(dao.author),
         type = dao.type,
-        theme = themeDaoToModel(dao.theme)
+        theme = themeDaoToModel(dao.theme),
+        description = dao.description
     )
 }
 
@@ -24,7 +25,8 @@ fun answerDaoToModel(dao: AnswerDao): Model.Answer {
         id = dao.id.value,
         question = questionDaoToModel(dao.question),
         text = dao.text,
-        isCorrect = dao.isCorrect
+        isCorrect = dao.isCorrect,
+        personality = dao.personality,
     )
 }
 
@@ -33,7 +35,7 @@ fun questionDaoToModel(dao: QuestionDao): Model.Question {
 }
 
 fun resultDaoToModel(dao: ResultDao): Model.Result {
-    return Model.Result(id = dao.id.value, test = testDaoToModel(dao.test), resultMessage = dao.resultMessage)
+    return Model.Result(id = dao.id.value, test = testDaoToModel(dao.test), resultMessage = dao.resultMessage, maxPoints = dao.maxPoints, personality = dao.personality)
 }
 
 fun roleDaoToModel(dao: RoleDao): Model.Role {

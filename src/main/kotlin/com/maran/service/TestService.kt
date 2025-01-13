@@ -56,10 +56,10 @@ class TestService @Inject constructor(
             if (themeRepository.getById(value.theme.id) == null) {
                 var newTheme = themeRepository.getByName(value.theme.name)
                 if (newTheme != null) {
-                    newValue = Test(id = value.id, type = value.type, name = value.name, author = value.author, theme = newTheme)
+                    newValue = Test(id = value.id, type = value.type, name = value.name, author = value.author, theme = newTheme, description = value.description)
                 } else {
                     newTheme = themeRepository.insert(Theme(UUID.randomUUID(), value.theme.name))
-                    newValue = Test(id = value.id, type = value.type, name = value.name, author = value.author, theme = newTheme!!)
+                    newValue = Test(id = value.id, type = value.type, name = value.name, author = value.author, theme = newTheme!!, description = value.description)
                 }
             }
 
