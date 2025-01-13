@@ -12,7 +12,8 @@ sealed class Model {
         val id: UUID,
         val question: Question,
         val text: String,
-        val isCorrect: Boolean
+        val isCorrect: Boolean?,
+        val personality: String?
     ) : Model()
 
     @Serializable

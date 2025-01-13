@@ -23,11 +23,11 @@ class AnswerRepository: IAnswerRepository {
     }
 
     override suspend fun insert(value: Answer): Answer = suspendTransaction {
-        answerDaoToModel(AnswerDao.new { question = QuestionDao[value.question.id]; text = value.text; isCorrect = value.isCorrect })
+        answerDaoToModel(AnswerDao.new { question = QuestionDao[value.question.id]; text = value.text; isCorrect = value.isCorrect; personality = value.personality })
     }
 
     override suspend fun update(value: Answer): Answer? = suspendTransaction {
-        val dao = AnswerDao.findByIdAndUpdate(value.id) { QuestionDao[value.question.id]; value.text; value.isCorrect }
+        val dao = AnswerDao.findByIdAndUpdate(value.id) { QuestionDao[value.question.id]; value.text; value.isCorrect; value.personality }
         if (dao == null) {
             null
         } else {

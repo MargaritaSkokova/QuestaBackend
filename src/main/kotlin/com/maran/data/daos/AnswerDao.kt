@@ -1,6 +1,7 @@
 package com.maran.data.daos
 
 import com.maran.data.entities.AnswerEntity
+import com.maran.data.entities.QuestionEntity
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -12,4 +13,5 @@ class AnswerDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var question by QuestionDao referencedOn AnswerEntity.question
     var text by AnswerEntity.text
     var isCorrect by AnswerEntity.isCorrect
+    var personality by AnswerEntity.personality
 }
