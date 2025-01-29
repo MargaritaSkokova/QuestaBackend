@@ -1,46 +1,48 @@
-package com.maran.data.models
-
+package com.maran.controller
 import com.maran.data.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.*
 
 @Serializable
-sealed class Model {
+sealed class Dto {
     @Serializable
     data class Answer(
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
-        val question: Question,
+        @Serializable(with = UUIDSerializer::class)
+        val questionId: UUID,
         val text: String,
         val isCorrect: Boolean?,
         val personality: String?
-    ) : Model()
+    ) : Dto()
 
     @Serializable
     data class Question(
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
         val text: String,
-        val test: Test,
+        @Serializable(with = UUIDSerializer::class)
+        val testId: UUID,
         val order: Int,
-    ) : Model()
+    ) : Dto()
 
     @Serializable
     data class Result(
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
-        val test: Test,
+        @Serializable(with = UUIDSerializer::class)
+        val testId: UUID,
         val resultMessage: String,
         val maxPoints: Int?,
         val personality: String?
-    ) : Model()
+    ) : Dto()
 
     @Serializable
     data class Role(
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
         val name: String
-    ) : Model()
+    ) : Dto()
 
     @Serializable
     data class Test(
@@ -48,30 +50,39 @@ sealed class Model {
         val id: UUID,
         val testType: String,
         val name: String,
-        val author: User,
-        val theme: Theme,
+        val author: String,
+        val theme: String,
         val description: String,
-    ) : Model()
+    ) : Dto()
 
     @Serializable
     data class Theme(
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
         val name: String
-    ) : Model()
+    ) : Dto()
 
     @Serializable
     data class User(
         @Serializable(with = UUIDSerializer::class)
         val id: UUID,
         val username: String,
-        val role: Role,
-        val password: String
-    ) : Model()
+        val role: String
+    ) : Dto()
 
     @Serializable
     data class Authentication(
+        @Serializable(with = UUIDSerializer::class)
         val username: String,
         val password: String
-    ) : Model()
+    ) : Dto()
+
+    @Serializable
+    data class SignUp(
+        @Serializable(with = UUIDSerializer::class)
+        val id: UUID,
+        val username: String,
+        val role: String,
+        val password: String
+    ) : Dto()
 }

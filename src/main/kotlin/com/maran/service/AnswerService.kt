@@ -1,5 +1,6 @@
 package com.maran.service
 
+import com.maran.controller.Dto
 import com.maran.data.models.Model.Answer
 import com.maran.data.models.Model.Question
 import com.maran.data.repository.IAnswerRepository
@@ -12,13 +13,23 @@ class AnswerService @Inject constructor(
     private val answerRepository: IAnswerRepository,
     private val questionRepository: IQuestionRepository
 ) : IAnswerService {
-    override suspend fun getByQuestion(question: Question): OperationResult {
+    override suspend fun getByQuestion(id: UUID): OperationResult {
         try {
+            val question = questionRepository.getById(id) ?: return OperationResult.FailureResult("Not Found")
             val answer = answerRepository.getByQuestion(question) ?: return OperationResult.FailureResult("Not Found")
             return OperationResult.SuccessResult(listOf(answer))
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }
+    }
+
+    override suspend fun mapDtoToModel(dto: Dto.Answer): Answer? {
+        val question = questionRepository.getById(dto.questionId) ?: return null
+        return Answer(dto.id, question, dto.text, dto.isCorrect, dto.personality)
+    }
+
+    override fun mapModelToDto(model: Answer): Dto.Answer {
+        return Dto.Answer(model.id, model.question.id, model.text, model.isCorrect, model.personality)
     }
 
     override suspend fun getAll(): OperationResult {

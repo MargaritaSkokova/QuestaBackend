@@ -13,16 +13,14 @@ import java.util.*
 
 fun Application.configureRoleRouting(roleService: IRoleService) {
     routing {
-        authenticate("auth-jwt") {
-            post("/role") {
-                val role = call.receive<Role>()
-                val result = roleService.insert(role)
-                if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
-                    return@post
-                } else if (result is OperationResult.FailureResult) {
-                    call.respond(HttpStatusCode.BadRequest, result.errorMessage)
-                }
+        post("/role") {
+            val role = call.receive<Dto.Role>()
+            val result = roleService.insert(roleService.mapDtoToModel(role))
+            if (result is OperationResult.SuccessResult) {
+                call.respond(HttpStatusCode.Created)
+                return@post
+            } else if (result is OperationResult.FailureResult) {
+                call.respond(HttpStatusCode.BadRequest, result.errorMessage)
             }
         }
 
@@ -30,7 +28,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
             get("/role/all") {
                 val result = roleService.getAll()
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map{el -> roleService.mapModelToDto(el as Role)})
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -42,7 +40,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
             get("/role/id/{id}") {
                 val result = roleService.getById(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map{el -> roleService.mapModelToDto(el as Role)}.single())
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -71,7 +69,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
                 } else {
                     val result = roleService.getByName(name)
                     if (result is OperationResult.SuccessResult) {
-                        call.respond(HttpStatusCode.OK, result.value)
+                        call.respond(HttpStatusCode.OK, result.value.map{el -> roleService.mapModelToDto(el as Role)})
                         return@get
                     } else if (result is OperationResult.FailureResult) {
                         call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -82,8 +80,8 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
 
         authenticate("auth-jwt") {
             put("/role") {
-                val role = call.receive<Role>()
-                val result = roleService.update(role)
+                val role = call.receive<Dto.Role>()
+                val result = roleService.update(roleService.mapDtoToModel(role))
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@put

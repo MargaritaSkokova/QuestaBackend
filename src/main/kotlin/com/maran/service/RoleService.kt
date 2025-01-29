@@ -1,5 +1,6 @@
 package com.maran.service
 
+import com.maran.controller.Dto
 import com.maran.data.models.Model.Role
 import com.maran.data.repository.IRoleRepository
 import com.maran.service.results.OperationResult
@@ -9,6 +10,14 @@ import javax.inject.Inject
 class RoleService @Inject constructor(
     private val roleRepository: IRoleRepository
 ) : IRoleService {
+    override fun mapDtoToModel(dto: Dto.Role): Role {
+        return Role(dto.id, dto.name)
+    }
+
+    override fun mapModelToDto(model: Role): Dto.Role {
+        return Dto.Role(model.id, model.name)
+    }
+
     override suspend fun getAll(): OperationResult {
         return try {
             OperationResult.SuccessResult(roleRepository.getAll())

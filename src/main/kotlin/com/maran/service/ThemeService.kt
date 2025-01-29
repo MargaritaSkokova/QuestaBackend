@@ -1,5 +1,6 @@
 package com.maran.service
 
+import com.maran.controller.Dto
 import com.maran.data.models.Model.Theme
 import com.maran.data.repository.IThemeRepository
 import com.maran.service.results.OperationResult
@@ -66,5 +67,13 @@ class ThemeService @Inject constructor(private val themeRepository: IThemeReposi
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }
+    }
+
+    override fun mapDtoToModel(dto: Dto.Theme): Theme {
+        return Theme(dto.id, dto.name)
+    }
+
+    override fun mapModelToDto(model: Theme): Dto.Theme {
+        return Dto.Theme(model.id, model.name)
     }
 }

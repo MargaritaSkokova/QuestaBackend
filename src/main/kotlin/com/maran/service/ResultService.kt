@@ -1,5 +1,6 @@
 package com.maran.service
 
+import com.maran.controller.Dto
 import com.maran.data.models.Model.Result
 import com.maran.data.models.Model.Test
 import com.maran.data.repository.IResultRepository
@@ -64,12 +65,22 @@ class ResultService @Inject constructor(
         }
     }
 
-    override suspend fun getByTest(test: Test): OperationResult {
+    override suspend fun getByTest(id: UUID): OperationResult {
         try {
+            val test = testRepository.getById(id) ?: return OperationResult.FailureResult("Not Found")
             val result = resultRepository.getByTest(test) ?: return OperationResult.FailureResult("Not Found")
             return OperationResult.SuccessResult(listOf(result))
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }
+    }
+
+    override suspend fun mapDtoToModel(dto: Dto.Result): Result? {
+        val test = testRepository.getById(dto.testId) ?: return null
+        return Result(dto.id, test, dto.resultMessage, dto.maxPoints, dto.personality)
+    }
+
+    override fun mapModelToDto(model: Result): Dto.Result {
+        return Dto.Result(model.id, model.test.id, model.resultMessage, model.maxPoints, model.personality)
     }
 }

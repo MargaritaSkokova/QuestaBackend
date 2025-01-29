@@ -15,7 +15,13 @@ fun Application.configureResultRouting(resultService: IResultService) {
     routing {
         authenticate("auth-jwt") {
             post("/result") {
-                val result = resultService.insert(call.receive<Result>())
+                val value = call.receive<Dto.Result>()
+                val model = resultService.mapDtoToModel(value)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
+                val result = resultService.insert(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@post
@@ -29,7 +35,7 @@ fun Application.configureResultRouting(resultService: IResultService) {
             get("/result/all") {
                 val result = resultService.getAll()
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> resultService.mapModelToDto(el as Result) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -41,7 +47,7 @@ fun Application.configureResultRouting(resultService: IResultService) {
             get("/result/id/{id}") {
                 val result = resultService.getById(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> resultService.mapModelToDto(el as Result) }.single())
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -50,11 +56,10 @@ fun Application.configureResultRouting(resultService: IResultService) {
         }
 
         authenticate("auth-jwt") {
-            get("/result/test") {
-                val test = call.receive<Test>()
-                val result = resultService.getByTest(test)
+            get("/result/test/{id}") {
+                val result = resultService.getByTest(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> resultService.mapModelToDto(el as Result) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -76,7 +81,13 @@ fun Application.configureResultRouting(resultService: IResultService) {
 
         authenticate("auth-jwt") {
             put("/result") {
-                val result = resultService.update(call.receive<Result>())
+                val value = call.receive<Dto.Result>()
+                val model = resultService.mapDtoToModel(value)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+                val result = resultService.update(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@put

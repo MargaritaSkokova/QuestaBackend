@@ -60,5 +60,11 @@ fun Application.configureSecurity(userService: IUserService) {
                 .sign(Algorithm.HMAC256(secret))
             call.respond(token)
         }
+
+        authenticate("auth-jwt") {
+            get("/check") {
+                call.respond(HttpStatusCode.OK, "Ok")
+            }
+        }
     }
 }

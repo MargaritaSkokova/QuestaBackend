@@ -15,8 +15,13 @@ fun Application.configureQuestionRouting(questionService: IQuestionService) {
     routing {
         authenticate("auth-jwt") {
             post("/question") {
-                val question = call.receive<Question>()
-                val result = questionService.insert(question)
+                val question = call.receive<Dto.Question>()
+                val model = questionService.mapDtoToModel(question)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
+                val result = questionService.insert(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@post
@@ -30,7 +35,7 @@ fun Application.configureQuestionRouting(questionService: IQuestionService) {
             get("/question/all") {
                 val result = questionService.getAll()
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> questionService.mapModelToDto(el as Question) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -42,7 +47,7 @@ fun Application.configureQuestionRouting(questionService: IQuestionService) {
             get("/question/id/{id}") {
                 val result = questionService.getById(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> questionService.mapModelToDto(el as Question) }.single())
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -51,11 +56,10 @@ fun Application.configureQuestionRouting(questionService: IQuestionService) {
         }
 
         authenticate("auth-jwt") {
-            get("/question/test") {
-                val test = call.receive<Test>()
-                val result = questionService.getByTest(test)
+            get("/question/test/{id}") {
+                val result = questionService.getByTest(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> questionService.mapModelToDto(el as Question) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -77,8 +81,13 @@ fun Application.configureQuestionRouting(questionService: IQuestionService) {
 
         authenticate("auth-jwt") {
             put("/question") {
-                val question = call.receive<Question>()
-                val result = questionService.update(question)
+                val question = call.receive<Dto.Question>()
+                val model = questionService.mapDtoToModel(question)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+                val result = questionService.update(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@put

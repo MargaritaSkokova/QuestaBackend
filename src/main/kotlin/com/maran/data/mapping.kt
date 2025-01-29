@@ -14,7 +14,7 @@ fun testDaoToModel(dao: TestDao): Model.Test {
         id = dao.id.value,
         name = dao.name,
         author = userDaoToModel(dao.author),
-        type = dao.type,
+        testType = dao.type,
         theme = themeDaoToModel(dao.theme),
         description = dao.description
     )

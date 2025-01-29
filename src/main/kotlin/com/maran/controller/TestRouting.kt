@@ -15,8 +15,13 @@ fun Application.configureTestRouting(testService: ITestService) {
     routing {
         authenticate("auth-jwt") {
             post("/test") {
-                val test = call.receive<Test>()
-                val result = testService.insert(test)
+                val test = call.receive<Dto.Test>()
+                val model = testService.mapDtoToModel(test)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
+                val result = testService.insert(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@post
@@ -30,7 +35,7 @@ fun Application.configureTestRouting(testService: ITestService) {
             get("/test/all") {
                 val result = testService.getAll()
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> testService.mapModelToDto(el as Test) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -42,7 +47,7 @@ fun Application.configureTestRouting(testService: ITestService) {
             get("/test/id/{id}") {
                 val result = testService.getById(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> testService.mapModelToDto(el as Test) }.single())
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -51,11 +56,13 @@ fun Application.configureTestRouting(testService: ITestService) {
         }
 
         authenticate("auth-jwt") {
-            get("/test/author") {
-                val author = call.receive<User>()
-                val result = testService.getByAuthor(author)
+            get("/test/author/{name}") {
+                if (call.parameters["name"] == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+                val result = testService.getByAuthor(call.parameters["name"]!!)
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> testService.mapModelToDto(el as Test) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -64,11 +71,13 @@ fun Application.configureTestRouting(testService: ITestService) {
         }
 
         authenticate("auth-jwt") {
-            get("/test/theme") {
-                val theme = call.receive<Theme>()
-                val result = testService.getByTheme(theme)
+            get("/test/theme/{name}") {
+                if (call.parameters["name"] == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+                val result = testService.getByTheme(call.parameters["name"]!!)
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> testService.mapModelToDto(el as Test) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -84,7 +93,7 @@ fun Application.configureTestRouting(testService: ITestService) {
                 } else {
                     val result = testService.getByType(type)
                     if (result is OperationResult.SuccessResult) {
-                        call.respond(HttpStatusCode.OK, result.value)
+                        call.respond(HttpStatusCode.OK, result.value.map { el -> testService.mapModelToDto(el as Test) })
                         return@get
                     } else if (result is OperationResult.FailureResult) {
                         call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -107,8 +116,13 @@ fun Application.configureTestRouting(testService: ITestService) {
 
         authenticate("auth-jwt") {
             put("/test") {
-                val test = call.receive<Test>()
-                val result = testService.update(test)
+                val test = call.receive<Dto.Test>()
+                val model = testService.mapDtoToModel(test)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+                val result = testService.update(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@put

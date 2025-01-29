@@ -1,5 +1,6 @@
 package com.maran.service
 
+import com.maran.controller.Dto
 import com.maran.data.models.Model.Test
 import com.maran.data.models.Model.Theme
 import com.maran.data.models.Model.User
@@ -56,10 +57,10 @@ class TestService @Inject constructor(
             if (themeRepository.getById(value.theme.id) == null) {
                 var newTheme = themeRepository.getByName(value.theme.name)
                 if (newTheme != null) {
-                    newValue = Test(id = value.id, type = value.type, name = value.name, author = value.author, theme = newTheme, description = value.description)
+                    newValue = Test(id = value.id, testType = value.testType, name = value.name, author = value.author, theme = newTheme, description = value.description)
                 } else {
                     newTheme = themeRepository.insert(Theme(UUID.randomUUID(), value.theme.name))
-                    newValue = Test(id = value.id, type = value.type, name = value.name, author = value.author, theme = newTheme!!, description = value.description)
+                    newValue = Test(id = value.id, testType = value.testType, name = value.name, author = value.author, theme = newTheme!!, description = value.description)
                 }
             }
 
@@ -79,11 +80,9 @@ class TestService @Inject constructor(
         }
     }
 
-    override suspend fun getByTheme(theme: Theme): OperationResult {
+    override suspend fun getByTheme(name: String): OperationResult {
         try {
-            if (themeRepository.getById(theme.id) == null) {
-                return OperationResult.FailureResult("Not Found")
-            }
+            val theme = themeRepository.getByName(name) ?: return OperationResult.FailureResult("Not Found")
 
             val tests = testRepository.getByTheme(theme)
             return OperationResult.SuccessResult(tests)
@@ -101,9 +100,10 @@ class TestService @Inject constructor(
         }
     }
 
-    override suspend fun getByAuthor(author: User): OperationResult {
+    override suspend fun getByAuthor(name: String): OperationResult {
         try {
-            if (userRepository.getById(author.id) == null) {
+            val author = userRepository.getByName(name)
+            if (author == null) {
                 return OperationResult.FailureResult("Not Found")
             }
 
@@ -112,5 +112,15 @@ class TestService @Inject constructor(
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }
+    }
+
+    override suspend fun mapDtoToModel(dto: Dto.Test): Test? {
+        val user = userRepository.getByName(dto.author) ?: return null
+        val theme = themeRepository.getByName(dto.theme) ?: return null
+        return Test(dto.id, dto.testType, dto.name, user, theme, dto.description)
+    }
+
+    override fun mapModelToDto(model: Test): Dto.Test {
+        return Dto.Test(model.id, model.testType, model.name, model.author.username, model.theme.name, model.description)
     }
 }

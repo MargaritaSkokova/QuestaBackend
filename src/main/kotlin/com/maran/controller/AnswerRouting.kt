@@ -15,8 +15,13 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
     routing {
         authenticate("auth-jwt") {
             post("/answer") {
-                val answer = call.receive<Answer>()
-                val result = answerService.insert(answer)
+                val answer = call.receive<Dto.Answer>()
+                val model = answerService.mapDtoToModel(answer)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
+                val result = answerService.insert(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@post
@@ -30,7 +35,7 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
             get("/answer/all") {
                 val result = answerService.getAll()
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> answerService.mapModelToDto(el as Answer) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -42,7 +47,7 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
             get("/answer/id/{id}") {
                 val result = answerService.getById(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> answerService.mapModelToDto(el as Answer) }.single())
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -51,11 +56,10 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
         }
 
         authenticate("auth-jwt") {
-            get("/answer/question") {
-                val question = call.receive<Question>()
-                val result = answerService.getByQuestion(question)
+            get("/answer/question/{id}") {
+                val result = answerService.getByQuestion(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK, result.value)
+                    call.respond(HttpStatusCode.OK, result.value.map { el -> answerService.mapModelToDto(el as Answer) })
                     return@get
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -77,8 +81,13 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
 
         authenticate("auth-jwt") {
             put("/answer") {
-                val answer = call.receive<Answer>()
-                val result = answerService.update(answer)
+                val answer = call.receive<Dto.Answer>()
+                val model = answerService.mapDtoToModel(answer)
+                if (model == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+                val result = answerService.update(model)
                 if (result is OperationResult.SuccessResult) {
                     call.respond(HttpStatusCode.Created)
                     return@put
