@@ -4,5 +4,5 @@ import com.maran.data.models.Model.Result
 import com.maran.data.models.Model.Test
 
 interface IResultRepository : IRepository<Result>{
-    suspend fun getByTest(test: Test): Result?
+    suspend fun getByTest(test: Test): List<Result>
 }

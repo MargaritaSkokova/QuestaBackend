@@ -17,7 +17,7 @@ class AnswerService @Inject constructor(
         try {
             val question = questionRepository.getById(id) ?: return OperationResult.FailureResult("Not Found")
             val answer = answerRepository.getByQuestion(question) ?: return OperationResult.FailureResult("Not Found")
-            return OperationResult.SuccessResult(listOf(answer))
+            return OperationResult.SuccessResult(answer)
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }

@@ -33,8 +33,8 @@ class ResultRepository : IResultRepository {
         ResultDao.find { ResultEntity.id eq id }.map(::resultDaoToModel).singleOrNull()
     }
 
-    override suspend fun getByTest(test: Test): Result? = suspendTransaction {
-        ResultDao.find { ResultEntity.test eq test.id }.map(::resultDaoToModel).singleOrNull()
+    override suspend fun getByTest(test: Test): List<Result> = suspendTransaction {
+        ResultDao.find { ResultEntity.test eq test.id }.map(::resultDaoToModel)
     }
 
     override suspend fun getAll(): List<Result> = suspendTransaction {

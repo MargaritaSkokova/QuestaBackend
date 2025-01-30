@@ -69,7 +69,7 @@ class ResultService @Inject constructor(
         try {
             val test = testRepository.getById(id) ?: return OperationResult.FailureResult("Not Found")
             val result = resultRepository.getByTest(test) ?: return OperationResult.FailureResult("Not Found")
-            return OperationResult.SuccessResult(listOf(result))
+            return OperationResult.SuccessResult(result)
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }

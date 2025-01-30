@@ -18,8 +18,8 @@ class AnswerRepository: IAnswerRepository {
         AnswerDao.find { (AnswerEntity.id eq id) }.map(::answerDaoToModel).singleOrNull()
     }
 
-    override suspend fun getByQuestion(question: Question): Answer? = suspendTransaction {
-        AnswerDao.find { (AnswerEntity.question eq question.id) }.map(::answerDaoToModel).singleOrNull()
+    override suspend fun getByQuestion(question: Question): List<Answer> = suspendTransaction {
+        AnswerDao.find { (AnswerEntity.question eq question.id) }.map(::answerDaoToModel)
     }
 
     override suspend fun insert(value: Answer): Answer = suspendTransaction {

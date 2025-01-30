@@ -34,8 +34,8 @@ class QuestionRepository :IQuestionRepository {
         QuestionDao.find { (QuestionEntity.id eq id) }.map(::questionDaoToModel).singleOrNull()
     }
 
-    override suspend fun getByTest(test: Test): Question? = suspendTransaction {
-        QuestionDao.find { (QuestionEntity.test eq test.id) }.map(::questionDaoToModel).singleOrNull()
+    override suspend fun getByTest(test: Test): List<Question> = suspendTransaction {
+        QuestionDao.find { (QuestionEntity.test eq test.id) }.map(::questionDaoToModel)
     }
 
     override suspend fun getAll(): List<Question> = suspendTransaction {

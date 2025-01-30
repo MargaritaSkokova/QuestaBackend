@@ -70,7 +70,7 @@ class QuestionService @Inject constructor(
         try {
             val test = testRepository.getById(id) ?: return OperationResult.FailureResult("Not Found")
             val question = questionRepository.getByTest(test) ?: return OperationResult.FailureResult("Not Found")
-            return OperationResult.SuccessResult(listOf(question))
+            return OperationResult.SuccessResult(question)
         } catch (e: Exception) {
             return OperationResult.FailureResult(e.message ?: "Unknown error")
         }
