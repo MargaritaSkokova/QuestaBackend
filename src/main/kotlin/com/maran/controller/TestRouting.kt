@@ -18,12 +18,12 @@ fun Application.configureTestRouting(testService: ITestService) {
                 val test = call.receive<Dto.Test>()
                 val model = testService.mapDtoToModel(test)
                 if (model == null) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, "Theme doesn't exist")
                     return@post
                 }
                 val result = testService.insert(model)
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@post
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -119,12 +119,12 @@ fun Application.configureTestRouting(testService: ITestService) {
                 val test = call.receive<Dto.Test>()
                 val model = testService.mapDtoToModel(test)
                 if (model == null) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, "Theme doesn't exist")
                     return@put
                 }
                 val result = testService.update(model)
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@put
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)

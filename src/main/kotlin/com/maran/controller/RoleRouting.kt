@@ -17,7 +17,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
             val role = call.receive<Dto.Role>()
             val result = roleService.insert(roleService.mapDtoToModel(role))
             if (result is OperationResult.SuccessResult) {
-                call.respond(HttpStatusCode.Created)
+                call.respond(HttpStatusCode.Created, "OK")
                 return@post
             } else if (result is OperationResult.FailureResult) {
                 call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -52,7 +52,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
             delete("/role/{id}") {
                 val result = roleService.delete(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK)
+                    call.respond(HttpStatusCode.OK, "OK")
                     return@delete
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -83,7 +83,7 @@ fun Application.configureRoleRouting(roleService: IRoleService) {
                 val role = call.receive<Dto.Role>()
                 val result = roleService.update(roleService.mapDtoToModel(role))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@put
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)

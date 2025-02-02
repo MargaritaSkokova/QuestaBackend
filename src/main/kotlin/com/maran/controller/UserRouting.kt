@@ -1,7 +1,6 @@
 package com.maran.controller
 
 import com.maran.data.models.Model.User
-import com.maran.controller.Dto
 import com.maran.service.IUserService
 import com.maran.service.results.OperationResult
 import io.ktor.http.*
@@ -19,13 +18,13 @@ fun Application.configureUserRouting(userService: IUserService) {
             val user = call.receive<Dto.SignUp>()
             val model = userService.mapSignUpDtoToModel(user)
             if (model == null) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "Role does not exist")
                 return@post
             }
 
             val result = userService.insert(model)
             if (result is OperationResult.SuccessResult) {
-                call.respond(HttpStatusCode.Created)
+                call.respond(HttpStatusCode.Created, "OK")
                 return@post
             } else if (result is OperationResult.FailureResult) {
                 call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -69,7 +68,7 @@ fun Application.configureUserRouting(userService: IUserService) {
 
                 val result = userService.delete(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK)
+                    call.respond(HttpStatusCode.OK, "")
                     return@delete
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -102,12 +101,12 @@ fun Application.configureUserRouting(userService: IUserService) {
                 val user = call.receive<Dto.SignUp>()
                 val model = userService.mapSignUpDtoToModel(user)
                 if (model == null) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, "Does not exist")
                     return@put
                 }
                 val result = userService.update(model)
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@put
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)

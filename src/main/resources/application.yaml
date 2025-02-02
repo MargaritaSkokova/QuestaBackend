@@ -5,11 +5,11 @@ ktor:
   deployment:
     port: 8080
 postgres:
-  url: "jdbc:postgresql://dpg-ctrjbaq3esus73ddlb7g-a.oregon-postgres.render.com:5432/db_app_android"
-  user: userm
-  password: DpxwvOgA4eRC8o8HN3pzJ6gzkazT2N41
+  url: "url"
+  user: user
+  password: password
 
 jwt:
-  secret: "secret"
+  secret: secret
   issuer: "http://0.0.0.0:8080/"
   realm: "access"

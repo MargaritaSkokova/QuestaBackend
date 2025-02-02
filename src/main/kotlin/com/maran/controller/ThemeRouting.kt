@@ -19,7 +19,7 @@ fun Application.configureThemeRouting(themeService: IThemeService) {
                 val theme = call.receive<Dto.Theme>()
                 val result = themeService.insert(themeService.mapDtoToModel(theme))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@post
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
@@ -86,7 +86,7 @@ fun Application.configureThemeRouting(themeService: IThemeService) {
                 val theme = call.receive<Dto.Theme>()
                 val result = themeService.update(themeService.mapDtoToModel(theme))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@put
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)

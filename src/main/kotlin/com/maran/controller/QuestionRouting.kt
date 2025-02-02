@@ -84,12 +84,12 @@ fun Application.configureQuestionRouting(questionService: IQuestionService) {
                 val question = call.receive<Dto.Question>()
                 val model = questionService.mapDtoToModel(question)
                 if (model == null) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, "Test doesn't exist")
                     return@put
                 }
                 val result = questionService.update(model)
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created, "OK")
                     return@put
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)

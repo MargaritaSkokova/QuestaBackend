@@ -18,7 +18,7 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
                 val answer = call.receive<Dto.Answer>()
                 val model = answerService.mapDtoToModel(answer)
                 if (model == null) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, "Question does not exist")
                     return@post
                 }
                 val result = answerService.insert(model)
@@ -71,7 +71,7 @@ fun Application.configureAnswerRouting(answerService: IAnswerService) {
             delete("/answer/{id}") {
                 val result = answerService.delete(UUID.fromString(call.parameters["id"]))
                 if (result is OperationResult.SuccessResult) {
-                    call.respond(HttpStatusCode.OK)
+                    call.respond(HttpStatusCode.OK, "OK")
                     return@delete
                 } else if (result is OperationResult.FailureResult) {
                     call.respond(HttpStatusCode.BadRequest, result.errorMessage)
